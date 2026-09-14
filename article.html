@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ports Race to Rebuild Buffer Stocks — Daybreak Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAFAF8;
+    --paper-dim:#F1EFE7;
+    --ink:#17171A;
+    --navy:#1B2A4A;
+    --signal:#C0272D;
+    --gold:#B8892B;
+    --gray-600:#5B5B56;
+    --gray-300:#D9D7CD;
+    --gray-150:#E8E6DC;
+    --font-display:'Fraunces', serif;
+    --font-body:'Public Sans', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  /* Masthead + nav (shared) */
+  .masthead{padding:28px 24px 18px;text-align:center;border-bottom:1px solid var(--gray-300);}
+  .masthead .dateline{font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;color:var(--gray-600);margin-bottom:10px;}
+  .masthead .logo{font-family:var(--font-display);font-weight:600;font-size:clamp(28px,5vw,44px);letter-spacing:-0.01em;}
+  .masthead .logo span{color:var(--signal);}
+  nav.categories{background:var(--navy);}
+  nav.categories .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
+  nav.categories .wrap::-webkit-scrollbar{display:none;}
+  nav.categories a{color:#EDEFF4;font-size:13.5px;font-weight:500;padding:13px 16px;white-space:nowrap;border-bottom:2px solid transparent;}
+  nav.categories a:hover{border-bottom-color:var(--signal);background:rgba(255,255,255,.04);}
+
+  .breadcrumb{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--gray-600);
+    padding:20px 24px 0;
+    max-width:760px;
+    margin:0 auto;
+  }
+  .breadcrumb a:hover{color:var(--signal);}
+
+  article{max-width:760px;margin:0 auto;padding:14px 24px 0;}
+
+  .art-kicker{font-family:var(--font-mono);font-size:12px;color:var(--signal);margin:18px 0 10px;}
+  h1.headline{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(30px,4.6vw,46px);
+    line-height:1.1;
+    margin:0 0 14px;
+  }
+  p.dek{
+    font-family:var(--font-display);
+    font-weight:400;
+    font-style:italic;
+    font-size:19px;
+    line-height:1.5;
+    color:#3B3B38;
+    margin:0 0 22px;
+  }
+
+  .byline-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:16px 0;
+    border-top:1px solid var(--gray-300);
+    border-bottom:1px solid var(--gray-300);
+    margin-bottom:26px;
+  }
+  .avatar{
+    width:38px;height:38px;border-radius:50%;
+    background:var(--navy);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-mono);font-size:12px;font-weight:500;
+    flex-shrink:0;
+  }
+  .byline-text .name{font-size:14px;font-weight:600;}
+  .byline-text .meta{font-family:var(--font-mono);font-size:11.5px;color:var(--gray-600);margin-top:2px;}
+
+  /* Listen panel */
+  .listen{
+    background:var(--paper-dim);
+    border:1px solid var(--gray-300);
+    padding:18px 20px;
+    margin-bottom:28px;
+  }
+  .listen-top{display:flex;align-items:center;gap:14px;}
+  .play-btn{
+    width:42px;height:42px;border-radius:50%;
+    background:var(--navy);color:#fff;border:none;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;flex-shrink:0;font-size:0;
+    transition:background .15s ease;
+  }
+  .play-btn:hover{background:#25396499;}
+  .play-btn svg{width:16px;height:16px;}
+  .listen-label{font-size:13.5px;font-weight:600;}
+  .listen-sub{font-family:var(--font-mono);font-size:11px;color:var(--gray-600);margin-top:2px;}
+  .listen-progress{
+    flex:1;
+    height:3px;background:var(--gray-300);
+    position:relative;cursor:pointer;
+    margin:0 4px;
+  }
+  .listen-progress-bar{position:absolute;left:0;top:0;height:100%;width:0%;background:var(--signal);}
+  .listen-time{font-family:var(--font-mono);font-size:11px;color:var(--gray-600);white-space:nowrap;}
+  .listen-controls{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap;}
+  .listen-controls label{font-family:var(--font-mono);font-size:10.5px;color:var(--gray-600);margin-right:4px;}
+  .speed-btn{
+    font-family:var(--font-mono);font-size:11.5px;
+    background:transparent;border:1px solid var(--gray-300);
+    padding:4px 9px;cursor:pointer;color:var(--ink);
+  }
+  .speed-btn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .listen-note{font-size:11.5px;color:var(--gray-600);margin-top:12px;line-height:1.5;}
+
+  .hero-fig{margin:0 -24px 28px;}
+  .hero-fig img{width:100%;aspect-ratio:16/9;object-fit:cover;}
+  .hero-fig figcaption{
+    font-family:var(--font-mono);
+    font-size:11px;color:var(--gray-600);
+    padding:8px 24px 0;
+  }
+
+  .body-copy{
+    font-family:var(--font-display);
+    font-size:19px;
+    line-height:1.65;
+    color:#232320;
+  }
+  .body-copy p{margin:0 0 22px;}
+  .body-copy .tts-sentence{transition:background .15s ease;}
+  .body-copy .tts-sentence.active{background:#F3DCA8;}
+  .body-copy h2{
+    font-family:var(--font-body);
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:.02em;
+    text-transform:uppercase;
+    color:var(--navy);
+    margin:38px 0 16px;
+  }
+  blockquote{
+    margin:32px 0;
+    padding:4px 0 4px 22px;
+    border-left:3px solid var(--signal);
+    font-family:var(--font-display);
+    font-style:italic;
+    font-size:23px;
+    line-height:1.4;
+    color:var(--navy);
+  }
+
+  .data-box{
+    background:var(--paper-dim);
+    border:1px solid var(--gray-300);
+    padding:22px 24px;
+    margin:32px 0;
+    font-family:var(--font-body);
+  }
+  .data-box h3{
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    letter-spacing:.04em;
+    color:var(--gray-600);
+    margin:0 0 14px;
+  }
+  .data-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--gray-300);font-size:14px;}
+  .data-row:last-child{border-bottom:none;}
+  .data-row .num{font-family:var(--font-mono);font-weight:500;color:var(--navy);}
+
+  .share-row{
+    display:flex;align-items:center;gap:14px;
+    padding:24px 0 36px;
+    margin-top:8px;
+    border-top:1px solid var(--gray-300);
+    font-family:var(--font-mono);font-size:12px;color:var(--gray-600);
+  }
+  .share-row a{width:30px;height:30px;border:1px solid var(--gray-300);display:flex;align-items:center;justify-content:center;font-size:12px;}
+  .share-row a:hover{border-color:var(--signal);color:var(--signal);}
+
+  .related{background:var(--paper-dim);padding:44px 24px;margin-top:20px;}
+  .related-inner{max-width:760px;margin:0 auto;}
+  .related h2{
+    font-family:var(--font-display);font-weight:600;font-size:20px;
+    margin:0 0 20px;padding-bottom:8px;border-bottom:2px solid var(--ink);
+  }
+  .related-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .related-card img{width:100%;aspect-ratio:16/10;object-fit:cover;margin-bottom:10px;}
+  .related-card .kicker{font-family:var(--font-mono);font-size:10.5px;color:var(--signal);margin-bottom:5px;}
+  .related-card h4{font-family:var(--font-display);font-weight:600;font-size:16px;line-height:1.3;margin:0;}
+
+  footer{padding:40px 24px 32px;border-top:1px solid var(--gray-300);}
+  .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;max-width:1180px;margin:0 auto;}
+  .footer-grid h5{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.04em;color:var(--gray-600);margin:0 0 12px;}
+  .footer-grid p{font-size:13.5px;color:var(--gray-600);line-height:1.6;margin:0;max-width:34ch;}
+  .footer-grid ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;}
+  .footer-grid a{font-size:13.5px;}
+  .footer-grid a:hover{color:var(--signal);}
+  .copyright{max-width:1180px;margin:36px auto 0;padding-top:18px;border-top:1px solid var(--gray-300);font-size:12px;color:var(--gray-600);font-family:var(--font-mono);}
+
+  @media (max-width:700px){
+    .related-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+    .hero-fig{margin-left:-24px;margin-right:-24px;}
+  }
+</style>
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="dateline" id="dateline"></div>
+    <a class="logo" href="index.html">Daybreak <span>Register</span></a>
+  </header>
+
+  <nav class="categories">
+    <div class="wrap">
+      <a href="index.html">Home</a>
+      <a href="#">National</a>
+      <a href="#">World</a>
+      <a href="#">Politics</a>
+      <a href="#">Economy</a>
+      <a href="#">Science</a>
+      <a href="#">Culture</a>
+      <a href="#">Opinion</a>
+    </div>
+  </nav>
+
+  <div class="breadcrumb"><a href="index.html">Home</a> / <a href="#">Economy</a></div>
+
+  <article>
+    <div class="art-kicker">ECONOMY</div>
+    <h1 class="headline">Ports Race to Rebuild Buffer Stocks as Shipping Lanes Stay Unsettled</h1>
+    <p class="dek">Freight operators are quietly rerouting cargo and rebuilding inventory buffers, a sign that the disruptions of the past two years have become something planners now build around rather than wait out.</p>
+
+    <div class="byline-row">
+      <div class="avatar">PN</div>
+      <div class="byline-text">
+        <div class="name">Priya Nathan · Economy Desk</div>
+        <div class="meta">14 September 2026 · 6 min read</div>
+      </div>
+    </div>
+
+    <div class="listen">
+      <div class="listen-top">
+        <button class="play-btn" id="playBtn" aria-label="Play">
+          <svg id="playIcon" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+          <svg id="pauseIcon" viewBox="0 0 24 24" fill="white" style="display:none"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+        </button>
+        <div>
+          <div class="listen-label">Listen to this article</div>
+          <div class="listen-sub" id="listenStatus">Narrated by your browser · ready</div>
+        </div>
+        <div class="listen-progress" id="progressTrack">
+          <div class="listen-progress-bar" id="progressBar"></div>
+        </div>
+        <div class="listen-time" id="listenTime">0:00</div>
+      </div>
+      <div class="listen-controls">
+        <label>SPEED</label>
+        <button class="speed-btn" data-speed="0.75">0.75×</button>
+        <button class="speed-btn active" data-speed="1">1×</button>
+        <button class="speed-btn" data-speed="1.25">1.25×</button>
+        <button class="speed-btn" data-speed="1.5">1.5×</button>
+      </div>
+      <div class="listen-note">Read aloud using your browser's built-in voice. No audio file to download. Each sentence highlights as it's read.</div>
+    </div>
+
+    <figure class="hero-fig">
+      <img src="https://picsum.photos/id/1005/1200/675" alt="Cranes loading containers at a port">
+      <figcaption>Photo: freight terminal, early morning shift · Daybreak Register</figcaption>
+    </figure>
+
+    <div class="body-copy" id="articleBody">
+      <p><span class="tts-sentence">Freight planners who spent the last two years chasing empty containers are now doing something that would have seemed strange in 2023: deliberately holding more inventory than they need.</span> <span class="tts-sentence">Warehouses near major ports report utilization climbing back toward pre-pandemic peaks, not because demand has surged, but because operators no longer trust that goods will arrive on schedule.</span></p>
+
+      <p><span class="tts-sentence">Interviews with logistics managers at six mid-sized retailers point to a consistent pattern.</span> <span class="tts-sentence">Rather than ordering just-in-time, most are now carrying four to six weeks of buffer stock on fast-moving goods, up from roughly two weeks before recent disruptions became routine.</span> <span class="tts-sentence">The shift is quiet, largely invisible to shoppers, and expensive.</span></p>
+
+      <h2>A permanent hedge, not a temporary fix</h2>
+      <p><span class="tts-sentence">Executives once described extra inventory as a stopgap.</span> <span class="tts-sentence">That language has changed.</span> <span class="tts-sentence">Several companies now describe buffer stock as a standing cost of doing business, budgeted the same way as insurance or currency hedging.</span></p>
+
+      <blockquote>"We stopped asking when things go back to normal. We started asking what normal costs now, and building that into the plan."</blockquote>
+
+      <p><span class="tts-sentence">Port authorities have adjusted too.</span> <span class="tts-sentence">Several are investing in overflow yard space and extended-hours processing, betting that variability in arrival times is here to stay rather than a temporary side effect of any single crisis.</span></p>
+
+      <div class="data-box">
+        <h3>BUFFER STOCK, BY THE NUMBERS</h3>
+        <div class="data-row"><span>Average buffer held, pre-2023</span><span class="num">~2 weeks</span></div>
+        <div class="data-row"><span>Average buffer held, 2026</span><span class="num">4–6 weeks</span></div>
+        <div class="data-row"><span>Reported rise in warehousing cost</span><span class="num">+18%</span></div>
+        <div class="data-row"><span>Retailers surveyed reporting the shift</span><span class="num">6 of 6</span></div>
+      </div>
+
+      <h2>What it means for prices</h2>
+      <p><span class="tts-sentence">The extra carrying cost does not vanish, and most of the managers interviewed expect a portion of it to reach shelf prices over the next two quarters.</span> <span class="tts-sentence">But several argued the trade-off is worth it, pointing to the cost of empty shelves during past disruptions as a worse outcome for customer loyalty than a modest, steady price increase.</span></p>
+
+      <p><span class="tts-sentence">For now, the buffer strategy looks less like a reaction to any one event and more like a durable rewrite of how goods move, planned around uncertainty rather than in spite of it.</span></p>
+    </div>
+
+    <div class="share-row">
+      <span>Share</span>
+      <a href="#" aria-label="Share on X">X</a>
+      <a href="#" aria-label="Share on LinkedIn">in</a>
+      <a href="#" aria-label="Share by email">@</a>
+    </div>
+  </article>
+
+  <section class="related">
+    <div class="related-inner">
+      <h2>Related articles</h2>
+      <div class="related-grid">
+        <a class="related-card" href="#">
+          <img src="https://picsum.photos/id/1039/500/312" alt="">
+          <div class="kicker">NATIONAL</div>
+          <h4>City Councils Turn to Shared Data Pools to Plan for Heat Season</h4>
+        </a>
+        <a class="related-card" href="#">
+          <img src="https://picsum.photos/id/1074/500/312" alt="">
+          <div class="kicker">WORLD</div>
+          <h4>Border Towns Adjust as Cross-River Trade Rules Loosen</h4>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <h5>DAYBREAK REGISTER</h5>
+        <p>Independent daily news, reported plainly. No paywall for breaking coverage.</p>
+      </div>
+      <div>
+        <h5>SECTIONS</h5>
+        <ul><li><a href="#">National</a></li><li><a href="#">World</a></li><li><a href="#">Economy</a></li><li><a href="#">Science</a></li></ul>
+      </div>
+      <div>
+        <h5>MORE</h5>
+        <ul><li><a href="#">Opinion</a></li><li><a href="#">Culture</a></li><li><a href="#">Most read</a></li></ul>
+      </div>
+      <div>
+        <h5>ABOUT</h5>
+        <ul><li><a href="#">Our newsroom</a></li><li><a href="#">Corrections</a></li><li><a href="#">Contact</a></li></ul>
+      </div>
+    </div>
+    <div class="copyright">© 2026 Daybreak Register. All rights reserved.</div>
+  </footer>
+
+<script>
+  document.getElementById('dateline').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+  // Read-aloud using Web Speech API
+  const sentences = Array.from(document.querySelectorAll('.tts-sentence'));
+  const playBtn = document.getElementById('playBtn');
+  const playIcon = document.getElementById('playIcon');
+  const pauseIcon = document.getElementById('pauseIcon');
+  const status = document.getElementById('listenStatus');
+  const progressBar = document.getElementById('progressBar');
+  const listenTime = document.getElementById('listenTime');
+  let speed = 1;
+  let currentIndex = 0;
+  let speaking = false;
+  const supported = 'speechSynthesis' in window;
+
+  document.querySelectorAll('.speed-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.speed-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      speed = parseFloat(btn.dataset.speed);
+    });
+  });
+
+  function speakFrom(i){
+    if(!supported || i>=sentences.length){
+      stopReading();
+      return;
+    }
+    sentences.forEach(s=>s.classList.remove('active'));
+    sentences[i].classList.add('active');
+    sentences[i].scrollIntoView({behavior:'smooth', block:'center'});
+    const utter = new SpeechSynthesisUtterance(sentences[i].textContent);
+    utter.rate = speed;
+    utter.onend = ()=>{
+      currentIndex = i+1;
+      progressBar.style.width = Math.round((currentIndex/sentences.length)*100) + '%';
+      if(speaking) speakFrom(currentIndex);
+    };
+    window.speechSynthesis.speak(utter);
+  }
+
+  function startReading(){
+    if(!supported){
+      status.textContent = 'Read-aloud not supported in this browser';
+      return;
+    }
+    speaking = true;
+    playIcon.style.display='none';
+    pauseIcon.style.display='block';
+    status.textContent = 'Reading aloud…';
+    speakFrom(currentIndex);
+  }
+
+  function stopReading(){
+    speaking = false;
+    window.speechSynthesis.cancel();
+    playIcon.style.display='block';
+    pauseIcon.style.display='none';
+    status.textContent = 'Narrated by your browser · ready';
+    sentences.forEach(s=>s.classList.remove('active'));
+    currentIndex = 0;
+    progressBar.style.width = '0%';
+  }
+
+  playBtn.addEventListener('click', ()=>{
+    if(speaking){
+      stopReading();
+    } else {
+      startReading();
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Daybreak Register — Independent daily news</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAFAF8;
+    --paper-dim:#F1EFE7;
+    --ink:#17171A;
+    --navy:#1B2A4A;
+    --signal:#C0272D;
+    --gold:#B8892B;
+    --gray-600:#5B5B56;
+    --gray-300:#D9D7CD;
+    --gray-150:#E8E6DC;
+    --font-display:'Fraunces', serif;
+    --font-body:'Public Sans', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  /* Masthead */
+  .masthead{
+    padding:28px 24px 18px;
+    text-align:center;
+    border-bottom:1px solid var(--gray-300);
+  }
+  .masthead .dateline{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.04em;
+    color:var(--gray-600);
+    margin-bottom:10px;
+  }
+  .masthead .logo{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(32px,6vw,52px);
+    letter-spacing:-0.01em;
+  }
+  .masthead .logo span{color:var(--signal);}
+  .masthead .tagline{
+    font-family:var(--font-body);
+    font-size:13px;
+    color:var(--gray-600);
+    margin-top:6px;
+  }
+
+  nav.categories{
+    background:var(--navy);
+  }
+  nav.categories .wrap{
+    display:flex;
+    gap:2px;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  nav.categories .wrap::-webkit-scrollbar{display:none;}
+  nav.categories a{
+    color:#EDEFF4;
+    font-size:13.5px;
+    font-weight:500;
+    padding:13px 16px;
+    white-space:nowrap;
+    border-bottom:2px solid transparent;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  nav.categories a:hover{
+    border-bottom-color:var(--signal);
+    background:rgba(255,255,255,.04);
+  }
+
+  /* Hero */
+  .hero{
+    display:grid;
+    grid-template-columns:1.3fr 1fr;
+    gap:40px;
+    padding:44px 24px 40px;
+    border-bottom:1px solid var(--gray-300);
+  }
+  .hero-media{position:relative;}
+  .hero-media img{width:100%;aspect-ratio:4/3;object-fit:cover;}
+  .hero-media .tag{
+    position:absolute;top:14px;left:14px;
+    background:var(--signal);
+    color:#fff;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:.06em;
+    padding:5px 10px;
+  }
+  .hero-copy{display:flex;flex-direction:column;justify-content:center;}
+  .hero-copy .kicker{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--signal);
+    margin-bottom:10px;
+  }
+  .hero-copy h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(28px,3.4vw,42px);
+    line-height:1.1;
+    margin:0 0 14px;
+    max-width:22ch;
+  }
+  .hero-copy p.dek{
+    font-size:16px;
+    line-height:1.55;
+    color:#3B3B38;
+    margin:0 0 16px;
+    max-width:52ch;
+  }
+  .byline{
+    font-size:12.5px;
+    color:var(--gray-600);
+    font-family:var(--font-mono);
+  }
+
+  /* Section headers */
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    padding:0 24px;
+    margin:44px 0 18px;
+  }
+  .section-head h2{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:22px;
+    margin:0;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--ink);
+  }
+  .section-head a{
+    font-size:13px;
+    color:var(--gray-600);
+    border-bottom:1px solid var(--gray-300);
+  }
+
+  /* Latest grid: one big + list */
+  .latest{
+    display:grid;
+    grid-template-columns:1fr 1px 1fr;
+    gap:0 32px;
+    padding:0 24px;
+  }
+  .latest-divider{background:var(--gray-300);}
+  .latest-main img{width:100%;aspect-ratio:16/10;object-fit:cover;margin-bottom:16px;}
+  .latest-main .kicker{font-family:var(--font-mono);font-size:11.5px;color:var(--signal);margin-bottom:8px;}
+  .latest-main h3{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:26px;
+    line-height:1.18;
+    margin:0 0 10px;
+  }
+  .latest-main p{font-size:15px;line-height:1.55;color:#3B3B38;margin:0 0 10px;}
+
+  .story-list{display:flex;flex-direction:column;}
+  .story-row{
+    display:flex;
+    gap:16px;
+    padding:18px 0;
+    border-bottom:1px solid var(--gray-300);
+  }
+  .story-row:first-child{padding-top:0;}
+  .story-row img{width:96px;height:72px;object-fit:cover;flex-shrink:0;}
+  .story-row .kicker{font-family:var(--font-mono);font-size:10.5px;color:var(--signal);margin-bottom:4px;}
+  .story-row h4{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:16px;
+    line-height:1.28;
+    margin:0;
+  }
+  .story-row .meta{font-family:var(--font-mono);font-size:11px;color:var(--gray-600);margin-top:6px;}
+
+  /* Category rail: 3 cards */
+  .rail{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:28px;
+    padding:0 24px;
+  }
+  .rail-card img{width:100%;aspect-ratio:3/2;object-fit:cover;margin-bottom:12px;}
+  .rail-card .kicker{font-family:var(--font-mono);font-size:11px;color:var(--signal);margin-bottom:6px;}
+  .rail-card h4{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:17px;
+    line-height:1.3;
+    margin:0 0 6px;
+  }
+  .rail-card p{font-size:13.5px;color:var(--gray-600);margin:0;line-height:1.5;}
+
+  /* Newsletter */
+  .newsletter{
+    margin:56px 24px 0;
+    background:var(--navy);
+    color:#EDEFF4;
+    padding:40px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .newsletter h3{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:24px;
+    margin:0 0 6px;
+  }
+  .newsletter p{margin:0;font-size:14px;color:#C6CCDA;max-width:40ch;}
+  .newsletter form{display:flex;gap:10px;flex-shrink:0;}
+  .newsletter input{
+    padding:12px 14px;
+    border:1px solid #3A4A6E;
+    background:#22335A;
+    color:#fff;
+    font-family:var(--font-body);
+    font-size:14px;
+    width:220px;
+  }
+  .newsletter input::placeholder{color:#8791A8;}
+  .newsletter button{
+    padding:12px 20px;
+    background:var(--signal);
+    color:#fff;
+    border:none;
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .newsletter button:hover{background:#a3212a;}
+
+  /* Footer */
+  footer{
+    margin-top:60px;
+    padding:40px 24px 32px;
+    border-top:1px solid var(--gray-300);
+  }
+  .footer-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr 1fr;
+    gap:32px;
+  }
+  .footer-grid h5{
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    letter-spacing:.04em;
+    color:var(--gray-600);
+    margin:0 0 12px;
+  }
+  .footer-grid p{font-size:13.5px;color:var(--gray-600);line-height:1.6;margin:0;max-width:34ch;}
+  .footer-grid ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;}
+  .footer-grid a{font-size:13.5px;color:var(--ink);}
+  .footer-grid a:hover{color:var(--signal);}
+  .copyright{
+    margin-top:36px;
+    padding-top:18px;
+    border-top:1px solid var(--gray-300);
+    font-size:12px;
+    color:var(--gray-600);
+    font-family:var(--font-mono);
+  }
+
+  @media (max-width:860px){
+    .hero{grid-template-columns:1fr;}
+    .latest{grid-template-columns:1fr;}
+    .latest-divider{display:none;}
+    .rail{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+    .newsletter{flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="dateline" id="dateline"></div>
+    <div class="logo">Daybreak <span>Register</span></div>
+    <div class="tagline">Independent daily news, reported plainly</div>
+  </header>
+
+  <nav class="categories">
+    <div class="wrap">
+      <a href="#">Home</a>
+      <a href="#">National</a>
+      <a href="#">World</a>
+      <a href="#">Politics</a>
+      <a href="#">Economy</a>
+      <a href="#">Science</a>
+      <a href="#">Culture</a>
+      <a href="#">Opinion</a>
+    </div>
+  </nav>
+
+  <section class="hero wrap">
+    <div class="hero-media">
+      <span class="tag">Lead story</span>
+      <img src="https://picsum.photos/id/1005/900/675" alt="Container port at dawn">
+    </div>
+    <div class="hero-copy">
+      <div class="kicker">ECONOMY</div>
+      <h1><a href="article.html">Ports Race to Rebuild Buffer Stocks as Shipping Lanes Stay Unsettled</a></h1>
+      <p class="dek">Freight operators are quietly rerouting cargo and rebuilding inventory buffers, a sign that the disruptions of the past two years have become something planners now build around rather than wait out.</p>
+      <div class="byline">By Priya Nathan · 14 Sept 2026 · 6 min read</div>
+    </div>
+  </section>
+
+  <div class="section-head">
+    <h2>Latest</h2>
+    <a href="#">All stories</a>
+  </div>
+
+  <div class="latest">
+    <div class="latest-main">
+      <img src="https://picsum.photos/id/1039/700/440" alt="City council chamber">
+      <div class="kicker">NATIONAL</div>
+      <h3><a href="article.html">City Councils Turn to Shared Data Pools to Plan for Heat Season</a></h3>
+      <p>A dozen mid-sized cities are pooling sensor data to time cooling-center openings, a low-cost fix officials say is already cutting emergency room visits.</p>
+      <div class="byline">By Marcus Abbott · 13 Sept 2026</div>
+    </div>
+    <div class="latest-divider"></div>
+    <div class="story-list">
+      <a class="story-row" href="article.html">
+        <img src="https://picsum.photos/id/1041/200/150" alt="">
+        <div>
+          <div class="kicker">SCIENCE</div>
+          <h4>Soil Microbe Survey Finds Surprising Gains in No-Till Farmland</h4>
+          <div class="meta">12 Sept · 4 min</div>
+        </div>
+      </a>
+      <a class="story-row" href="article.html">
+        <img src="https://picsum.photos/id/1074/200/150" alt="">
+        <div>
+          <div class="kicker">WORLD</div>
+          <h4>Border Towns Adjust as Cross-River Trade Rules Loosen</h4>
+          <div class="meta">12 Sept · 5 min</div>
+        </div>
+      </a>
+      <a class="story-row" href="article.html">
+        <img src="https://picsum.photos/id/1080/200/150" alt="">
+        <div>
+          <div class="kicker">CULTURE</div>
+          <h4>Regional Theaters Report a Quiet Rebound in Season Ticket Sales</h4>
+          <div class="meta">11 Sept · 3 min</div>
+        </div>
+      </a>
+      <a class="story-row" href="article.html">
+        <img src="https://picsum.photos/id/1084/200/150" alt="">
+        <div>
+          <div class="kicker">POLITICS</div>
+          <h4>State Budgets Diverge Sharply on Infrastructure Priorities</h4>
+          <div class="meta">10 Sept · 7 min</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>Around the world</h2>
+    <a href="#">World section</a>
+  </div>
+
+  <div class="rail">
+    <a class="rail-card" href="article.html">
+      <img src="https://picsum.photos/id/1015/500/333" alt="">
+      <div class="kicker">WORLD</div>
+      <h4>Fishing Communities Adapt Gear as Migration Patterns Shift North</h4>
+      <p>Cooperatives are retooling nets and schedules faster than regulators can update quotas.</p>
+    </a>
+    <a class="rail-card" href="article.html">
+      <img src="https://picsum.photos/id/1016/500/333" alt="">
+      <div class="kicker">OPINION</div>
+      <h4>The Case for Slower Permitting on Fast Infrastructure</h4>
+      <p>Speed and durability keep getting treated as opposites. They don't have to be.</p>
+    </a>
+    <a class="rail-card" href="article.html">
+      <img src="https://picsum.photos/id/1024/500/333" alt="">
+      <div class="kicker">NATIONAL</div>
+      <h4>Rural Clinics Pilot Shared On-Call Rosters Across County Lines</h4>
+      <p>A staffing experiment born of necessity is outperforming expectations.</p>
+    </a>
+  </div>
+
+  <div class="newsletter">
+    <div>
+      <h3>The Daybreak Briefing</h3>
+      <p>One email, every weekday morning. The stories that matter, nothing you have to sift through.</p>
+    </div>
+    <form onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed';">
+      <input type="email" placeholder="you@email.com" required>
+      <button type="submit">Subscribe</button>
+    </form>
+  </div>
+
+  <footer>
+    <div class="wrap footer-grid">
+      <div>
+        <h5>DAYBREAK REGISTER</h5>
+        <p>Independent daily news, reported plainly. No paywall for breaking coverage.</p>
+      </div>
+      <div>
+        <h5>SECTIONS</h5>
+        <ul>
+          <li><a href="#">National</a></li>
+          <li><a href="#">World</a></li>
+          <li><a href="#">Economy</a></li>
+          <li><a href="#">Science</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>MORE</h5>
+        <ul>
+          <li><a href="#">Opinion</a></li>
+          <li><a href="#">Culture</a></li>
+          <li><a href="#">Most read</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>ABOUT</h5>
+        <ul>
+          <li><a href="#">Our newsroom</a></li>
+          <li><a href="#">Corrections</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrap copyright">© 2026 Daybreak Register. All rights reserved.</div>
+  </footer>
+
+<script>
+  document.getElementById('dateline').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+</script>
+</body>
+</html>
